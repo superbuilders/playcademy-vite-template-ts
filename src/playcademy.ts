@@ -1,4 +1,4 @@
-import { initFromWindow, PlaycademyClient } from '@playcademy/sdk'
+import { initFromWindow, PlaycademyClient, BusEvents } from '@playcademy/sdk'
 
 // --- Public ---
 
@@ -37,9 +37,9 @@ function initializePlaycademyInternal(): Promise<PlaycademyClient> {
             const timeoutDuration = 5000
 
             const handleMessage = (event: MessageEvent) => {
-                if (event.data?.type === 'PLAYCADEMY_INIT') {
+                if (event.data?.type === BusEvents.INIT) {
                     console.log(
-                        '[PlaycademyInit] Received PLAYCADEMY_INIT:',
+                        `[PlaycademyInit] Received ${BusEvents.INIT}:`,
                         event.data.payload,
                     )
                     contextReceived = true
@@ -75,11 +75,11 @@ function initializePlaycademyInternal(): Promise<PlaycademyClient> {
                 if (!contextReceived) {
                     window.removeEventListener('message', handleMessage) // Clean up listener
                     console.warn(
-                        `[PlaycademyInit] PLAYCADEMY_INIT not received within ${timeoutDuration}ms.`,
+                        `[PlaycademyInit] ${BusEvents.INIT} not received within ${timeoutDuration}ms.`,
                     )
                     reject(
                         new Error(
-                            'PLAYCADEMY_INIT not received within timeout.',
+                            `${BusEvents.INIT} not received within timeout.`,
                         ),
                     )
                 }
@@ -92,7 +92,7 @@ function initializePlaycademyInternal(): Promise<PlaycademyClient> {
 
             const mockContext = {
                 baseUrl: '/api',
-                gameToken: 'mock-game-token-for-local-dev',
+                token: 'mock-game-token-for-local-dev',
                 // Provide a realistic gameId - essential for the client
                 gameId: 'mock-game-id-from-template',
                 // Note: User data is fetched via client.users.me(), not passed in context.

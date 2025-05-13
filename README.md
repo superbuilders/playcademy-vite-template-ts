@@ -38,7 +38,7 @@ yarn dev
     - The `baseUrl` in the mock context is set to `/api`. If you are running a local development server for the Playcademy API and it's _not_ proxied to `/api` by Vite, you may need to adjust the `baseUrl` in the mock context or configure Vite's proxy settings in `vite.config.ts`. See the Vite documentation for proxy configuration.
     - The `client.runtime.exit()` function will only log a warning in standalone mode, as there is no platform environment to exit.
 
-- **Iframe Mode (Simulated):** To simulate running inside the Playcademy platform, you would typically load this development URL within an iframe in a separate local HTML file or test harness. This harness would need to use `postMessage` to send a valid `PLAYCADEMY_INIT` object (containing a real `baseUrl` and potentially `sessionToken`/`gameToken`) to the game iframe before `initializeCademy` is called in `src/main.ts`.
+- **Iframe Mode (Simulated):** To simulate running inside the Playcademy platform, you would typically load this development URL within an iframe in a separate local HTML file or test harness. This harness would need to use `postMessage` to send a valid `PLAYCADEMY_INIT` object (containing a real `baseUrl` and `token`) to the game iframe before `initializeCademy` is called in `src/main.ts`.
 
 ## SDK Access
 
