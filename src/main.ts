@@ -2,7 +2,7 @@ import './style.css'
 import './rainbow-status.css'
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
-import { initializeCademy } from './cademy-init'
+import { initializeCademy } from './playcademy-init'
 import type { CademyClient } from '@playcademy/sdk'
 
 // --- Basic DOM Setup ---
