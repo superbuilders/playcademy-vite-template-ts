@@ -9,4 +9,5 @@ export default defineConfig({
             entryPoint: 'index.html',
         }),
     ],
+    base: './',
 })

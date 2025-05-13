@@ -1,13 +1,21 @@
 import { initFromWindow, CademyClient } from '@playcademy/sdk'
 
-declare global {
-    interface Window {
-        CADEMY?: Record<string, unknown>
-    }
-}
+// --- Public ---
 
 /**
- * Initializes the Playcademy SDK client.
+ * Sets up the Playcademy environment by initializing the SDK.
+ * Does NOT handle UI updates - that responsibility lies with the caller.
+ * @returns A Promise that resolves with the initialized CademyClient instance.
+ * @throws Throws an error if initialization fails.
+ */
+export async function setupPlaycademy(): Promise<CademyClient> {
+    return initializeCademyInternal()
+}
+
+// --- Private (DO NOT TOUCH) ---
+
+/**
+ * (Internal) Initializes the Playcademy SDK client.
  *
  * This function handles:
  * - Detecting if running inside the Playcademy Platform or standalone.
@@ -18,7 +26,7 @@ declare global {
  * @returns A Promise that resolves with the initialized CademyClient instance
  *          or rejects if initialization fails.
  */
-export function initializeCademy(): Promise<CademyClient> {
+function initializeCademyInternal(): Promise<CademyClient> {
     return new Promise((resolve, reject) => {
         if (window.self !== window.top) {
             // --- IFRAME MODE (Running inside Playcademy Platform) ---
@@ -82,31 +90,16 @@ export function initializeCademy(): Promise<CademyClient> {
                 '[PlaycademyInit] Running in standalone mode, setting up mock context.',
             )
 
-            // This mock context should reflect the essential fields provided by
-            // the Cademy loader in an iframe environment for client initialization.
             const mockContext = {
-                // Essential for CademyClient initialization (from boot-iframe.ts context)
-                baseUrl: '/api', // For local dev, Vite proxy handles this to your backend.
-                // In real iframe, this is the full API base URL.
+                baseUrl: '/api',
                 gameToken: 'mock-game-token-for-local-dev',
+                // Provide a realistic gameId - essential for the client
                 gameId: 'mock-game-id-from-template',
-
-                // Optional: For richer local development if your game uses these directly from context
-                // These are NOT part of the initial CADEMY_CONTEXT message from boot-iframe.ts
-                // The SDK client typically fetches/manages user and session state itself.
-                assetBaseUrl: '/assets', // If your game needs a base for assets locally
-                sessionId: 'mock-session-id-for-local-dev', // For emulating an active session
-                user: {
-                    // For emulating a logged-in user
-                    id: 'mock-user-id-dev',
-                    username: 'local_developer',
-                    avatarUrl: 'https://via.placeholder.com/50?text=Dev',
-                },
+                // Note: User data is fetched via client.users.me(), not passed in context.
             }
 
             window.CADEMY = mockContext
 
-            // Use setTimeout to ensure the DOM is ready and to slightly mimic async loading.
             setTimeout(() => {
                 initFromWindow()
                     .then(client => {
@@ -125,4 +118,10 @@ export function initializeCademy(): Promise<CademyClient> {
             }, 500)
         }
     })
+}
+
+declare global {
+    interface Window {
+        CADEMY?: Record<string, unknown>
+    }
 }
