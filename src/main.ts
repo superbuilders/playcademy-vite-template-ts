@@ -4,7 +4,7 @@ import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
 
 import { setupPlaycademy } from './playcademy'
-import type { CademyClient } from '@playcademy/sdk'
+import type { PlaycademyClient } from '@playcademy/sdk'
 
 // --- Basic DOM Setup ---
 
@@ -33,7 +33,7 @@ const exitButton = document.querySelector<HTMLButtonElement>('#exitButton')
 
 // --- Main Application Flow (IIAFE to handle async) ---
 ;(async () => {
-    let client: CademyClient | null = null
+    let client: PlaycademyClient | null = null
 
     try {
         // Step 1: Initialize the SDK
@@ -72,7 +72,7 @@ const exitButton = document.querySelector<HTMLButtonElement>('#exitButton')
 // --- UI Update Functions (Specific to this template) ---
 
 function updateUIToSuccess(
-    client: CademyClient,
+    client: PlaycademyClient,
     statusEl: HTMLParagraphElement | null,
     buttonEl: HTMLButtonElement | null,
 ) {

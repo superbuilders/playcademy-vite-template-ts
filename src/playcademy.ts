@@ -1,15 +1,15 @@
-import { initFromWindow, CademyClient } from '@playcademy/sdk'
+import { initFromWindow, PlaycademyClient } from '@playcademy/sdk'
 
 // --- Public ---
 
 /**
  * Sets up the Playcademy environment by initializing the SDK.
  * Does NOT handle UI updates - that responsibility lies with the caller.
- * @returns A Promise that resolves with the initialized CademyClient instance.
+ * @returns A Promise that resolves with the initialized PlaycademyClient instance.
  * @throws Throws an error if initialization fails.
  */
-export async function setupPlaycademy(): Promise<CademyClient> {
-    return initializeCademyInternal()
+export async function setupPlaycademy(): Promise<PlaycademyClient> {
+    return initializePlaycademyInternal()
 }
 
 // --- Private (DO NOT TOUCH) ---
@@ -19,34 +19,34 @@ export async function setupPlaycademy(): Promise<CademyClient> {
  *
  * This function handles:
  * - Detecting if running inside the Playcademy Platform or standalone.
- * - Listening for the CADEMY_CONTEXT message when in an iframe.
+ * - Listening for the PLAYCADEMY_INIT message when in an iframe.
  * - Setting up a mock context for local development when running standalone.
  * - Calling the core initFromWindow function from the SDK.
  *
- * @returns A Promise that resolves with the initialized CademyClient instance
+ * @returns A Promise that resolves with the initialized PlaycademyClient instance
  *          or rejects if initialization fails.
  */
-function initializeCademyInternal(): Promise<CademyClient> {
+function initializePlaycademyInternal(): Promise<PlaycademyClient> {
     return new Promise((resolve, reject) => {
         if (window.self !== window.top) {
             // --- IFRAME MODE (Running inside Playcademy Platform) ---
             console.log(
-                '[PlaycademyInit] Running in iframe mode, waiting for CADEMY_CONTEXT...',
+                '[PlaycademyInit] Running in iframe mode, waiting for PLAYCADEMY_INIT...',
             )
             let contextReceived = false
             const timeoutDuration = 5000
 
             const handleMessage = (event: MessageEvent) => {
-                if (event.data?.type === 'CADEMY_CONTEXT') {
+                if (event.data?.type === 'PLAYCADEMY_INIT') {
                     console.log(
-                        '[PlaycademyInit] Received CADEMY_CONTEXT:',
+                        '[PlaycademyInit] Received PLAYCADEMY_INIT:',
                         event.data.payload,
                     )
                     contextReceived = true
                     window.removeEventListener('message', handleMessage)
                     clearTimeout(timeoutId)
 
-                    window.CADEMY = event.data.payload as Record<
+                    window.PLAYCADEMY = event.data.payload as Record<
                         string,
                         unknown
                     >
@@ -75,11 +75,11 @@ function initializeCademyInternal(): Promise<CademyClient> {
                 if (!contextReceived) {
                     window.removeEventListener('message', handleMessage) // Clean up listener
                     console.warn(
-                        `[PlaycademyInit] CADEMY_CONTEXT not received within ${timeoutDuration}ms.`,
+                        `[PlaycademyInit] PLAYCADEMY_INIT not received within ${timeoutDuration}ms.`,
                     )
                     reject(
                         new Error(
-                            'CADEMY_CONTEXT not received within timeout.',
+                            'PLAYCADEMY_INIT not received within timeout.',
                         ),
                     )
                 }
@@ -98,7 +98,7 @@ function initializeCademyInternal(): Promise<CademyClient> {
                 // Note: User data is fetched via client.users.me(), not passed in context.
             }
 
-            window.CADEMY = mockContext
+            window.PLAYCADEMY = mockContext
 
             setTimeout(() => {
                 initFromWindow()
@@ -122,6 +122,6 @@ function initializeCademyInternal(): Promise<CademyClient> {
 
 declare global {
     interface Window {
-        CADEMY?: Record<string, unknown>
+        PLAYCADEMY?: Record<string, unknown>
     }
 }
