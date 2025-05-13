@@ -1,6 +1,6 @@
 {
   "name": "@playcademy/vite-template-ts",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -8,10 +8,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@playcademy/sdk": "workspace:*"
+    "@playcademy/sdk": "latest"
   },
   "devDependencies": {
-    "@playcademy/vite-plugin": "workspace:*",
+    "@playcademy/vite-plugin": "latest",
     "typescript": "^5",
     "vite": "^6.3.5"
   }
