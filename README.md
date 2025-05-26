@@ -5,9 +5,9 @@ This template provides a starting point for building web-native games for the Pl
 ## Features
 
 - A standard Vite TypeScript setup.
-- Pre-configured `@playcademy/sdk` integration.
-- Automatic `playcademy.manifest.json` generation using `@playcademy/vite-plugin-cademy-manifest`.
-- Initialization logic to handle both running within the Playcademy platform (iframe) and local standalone development.
+- Pre-configured `@playcademy/sdk` integration with simplified initialization.
+- Automatic `playcademy.manifest.json` generation using `@playcademy/vite-plugin`.
+- Automatic development environment for local development with real API simulation.
 - Example UI elements showing initialization status and an exit button.
 
 ## Getting Started
@@ -33,18 +33,38 @@ npm run dev
 yarn dev
 ```
 
-- **Standalone Mode:** When you run the dev server and open the localhost URL directly in your browser, the template uses a **mock `window.PLAYCADEMY` context** defined in `src/playcademy.ts`. This allows the game to load and basic UI to function, but SDK calls will _not_ interact with a real backend.
+The `@playcademy/vite-plugin` automatically provides a **development environment** that simulates the Playcademy platform:
 
-    - The `baseUrl` in the mock context is set to `/api`. If you are running a local development server for the Playcademy API and it's _not_ proxied to `/api` by Vite, you may need to adjust the `baseUrl` in the mock context or configure Vite's proxy settings in `vite.config.ts`. See the Vite documentation for proxy configuration.
-    - The `client.runtime.exit()` function will only log a warning in standalone mode, as there is no platform environment to exit.
+- **Full Platform Simulation:** Your game runs in the same environment as production, complete with user authentication, inventory system, and all Playcademy APIs.
 
-- **Iframe Mode (Simulated):** To simulate running inside the Playcademy platform, you would typically load this development URL within an iframe in a separate local HTML file or test harness. This harness would need to use `postMessage` to send a valid `PLAYCADEMY_INIT` object (containing a real `baseUrl` and `token`) to the game iframe before `initializeCademy` is called in `src/main.ts`.
+- **Fully Functional APIs:** SDK calls like `client.users.me()`, `client.inventory.get()`, and `client.games.saveState()` work exactly like production - no mocking required.
 
-## SDK Access
+- **Automatic Setup:** The plugin handles all the complexity - just run `bun dev` and start building your game.
 
-The initialized `CademyClient` instance is available via the `cademyClient` variable exported from `src/playcademy.ts` after the `initializeCademy()` promise resolves. You can import and use this client instance in other modules as needed to interact with Playcademy APIs (e.g., `cademyClient.progress.update(...)`).
+- **Hot Reload:** Changes to your game code are instantly reflected, just like standard Vite development.
 
-See the example `exitButton` implementation in `src/main.ts`.
+## SDK Usage
+
+The SDK is initialized directly in `src/main.ts` using:
+
+```typescript
+const client = await PlaycademyClient.init()
+```
+
+Once initialized, you can use all SDK features:
+
+```typescript
+// Get user data
+const user = await client.users.me()
+
+// Update progress
+await client.games.saveState({ level: 5, score: 1000 })
+
+// Access inventory
+const inventory = await client.users.inventory.get()
+```
+
+See the example implementation in `src/main.ts`.
 
 ## Building for Playcademy
 
@@ -57,8 +77,8 @@ bun run build
 
 This command will:
 
-1.  Run Vite's build process, outputting optimized files to the `dist/` directory.
-2.  Trigger the `@playcademy/vite-plugin-cademy-manifest`, which will generate the `playcademy.manifest.json` file inside `dist/`. Ensure you have updated the placeholder `gameId` and `gameName` in `vite.config.ts` to match your game's details on the Playcademy platform.
+1. Run Vite's build process, outputting optimized files to the `dist/` directory.
+2. Trigger the `@playcademy/vite-plugin`, which will generate the `playcademy.manifest.json` file inside `dist/`. Ensure you have updated the placeholder `gameId` and `gameName` in `vite.config.ts` to match your game's details on the Playcademy platform.
 
 The `dist/` directory will contain all the necessary files for your game. **You must create a zip file from the contents of this `dist/` directory** and upload that zip file to the Playcademy platform when creating or updating your game.
 
@@ -67,7 +87,7 @@ For more details on the build and upload process, please refer to the [Playcadem
 ## Customization
 
 - **Game Logic**: Implement your core game logic within the `src` directory. `src/main.ts` is the main entry point.
-- **Initialization**: Modify SDK initialization behavior or the mock context in `src/playcademy.ts`.
+- **SDK Integration**: The SDK is initialized directly in `src/main.ts` - no separate files needed.
 - **Styling**: Adjust UI styles in `style.css` and `src/rainbow-status.css`.
 - **HTML Structure**: The base HTML is in `index.html`. Dynamic content is injected by `src/main.ts`.
 - **Vite Configuration**: Add plugins or adjust build settings in `vite.config.ts`.
