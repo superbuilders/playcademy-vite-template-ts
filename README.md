@@ -12,13 +12,26 @@ This template provides a starting point for building web-native games for the Pl
 
 ## Getting Started
 
-### Using `degit` (Recommended)
+### Using `tiged` (Recommended)
 
 ```bash
 # Replace my-cademy-game with your desired project name
-bunx degit superbuilders/playcademy-vite-template-ts my-cademy-game
+bunx tiged superbuilders/playcademy-vite-template-ts my-cademy-game
 cd my-cademy-game
-bun install # or npm install / yarn install
+```
+
+Install dependencies:
+
+```bash
+bun install
+```
+
+```bash
+pnpm install
+```
+
+```bash
+npm install
 ```
 
 ## Development
@@ -27,10 +40,14 @@ Run the development server:
 
 ```bash
 bun dev
-# or
+```
+
+```bash
+pnpm dev
+```
+
+```bash
 npm run dev
-# or
-yarn dev
 ```
 
 The `@playcademy/vite-plugin` automatically provides a **development environment** that simulates the Playcademy platform:
@@ -72,7 +89,14 @@ Build the production-ready assets:
 
 ```bash
 bun run build
-# or npm run build / yarn build
+```
+
+```bash
+pnpm build
+```
+
+```bash
+npm run build
 ```
 
 This command will:

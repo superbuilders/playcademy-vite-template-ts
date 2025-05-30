@@ -1,9 +1,10 @@
 import './style.css'
 import './rainbow-status.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
 
 import { PlaycademyClient } from '@playcademy/sdk'
+
+import typescriptLogo from './typescript.svg'
+import viteLogo from '/vite.svg'
 
 // --- Basic DOM Setup ---
 
@@ -26,8 +27,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 `
 
 // --- UI Element Selection ---
-const statusElement =
-    document.querySelector<HTMLParagraphElement>('.status-text')
+const statusElement = document.querySelector<HTMLParagraphElement>('.status-text')
 const exitButton = document.querySelector<HTMLButtonElement>('#exitButton')
 
 // --- Main Application Flow (IIAFE to handle async) ---
@@ -88,14 +88,10 @@ function updateUIToSuccess(
 
         newButtonEl.onclick = () => {
             if (window.self !== window.top) {
-                console.log(
-                    '[Main] Attempting to exit via client.runtime.exit()...',
-                )
+                console.log('[Main] Attempting to exit via client.runtime.exit()...')
                 client.runtime.exit()
             } else {
-                console.warn(
-                    '[Main] Exit Game clicked in Standalone Mode. No actual exit occurs.',
-                )
+                console.warn('[Main] Exit Game clicked in Standalone Mode. No actual exit occurs.')
                 if (statusEl) {
                     statusEl.textContent = 'Exited [Standalone Mode]'
                     statusEl.classList.add('exited')
